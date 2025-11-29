@@ -1,2 +1,9 @@
+# Bank statement data
 bank-statement-data/*
 !bank-statement-data/.gitkeep
+
+# Virtual environment
+.venv/
+
+# Environment variables / secrets
+.env
