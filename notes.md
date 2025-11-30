@@ -22,3 +22,5 @@ Currently following a video from freeCodeCamp __RAG Fundamentals and Advanced Te
         - Retrieved
     5. The most similar embeddings to your query embeddings get pushed together through a _general LLM_, which then generates a response. The _generated_ response is _augmented_ by the data that was _retrieved_.
         - Relevant docs together with a prompt and the query get passed througj LLM, then response is generated and returned.
+
+  - Special packages: openai, chromadb, python-dotenv
