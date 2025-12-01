@@ -7,3 +7,6 @@ bank-statement-data/*
 
 # Environment variables / secrets
 .env
+
+# ChromaDB
+chroma_persistent_storage/*

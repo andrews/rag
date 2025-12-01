@@ -24,3 +24,15 @@ Currently following a video from freeCodeCamp __RAG Fundamentals and Advanced Te
         - Relevant docs together with a prompt and the query get passed througj LLM, then response is generated and returned.
 
   - Special packages: openai, chromadb, python-dotenv
+
+## Building the app
+  - Used `.gitignore` for the environment variables (OpenAI key) and the bank statement data.
+    - Also used `.gitkeep` in that folder, so we still _see_ it, it's committed to the repo, but the contents aren't.
+  - Using virtual environments and added a `requirements.txt` file. Also added the `.venv` folder to `.gitignore` since we don't need everything committed to git.
+  - Loaded the API key with `python-dotenv`
+  - Made a call using OpenAI API
+  - Started chunking bank statement files.
+    - The tutorial is chunking news articles, with overlap on the characters. However, this may not make much sense with CSV files. Might be more useful to chunk CSV files by lines instead of by characters. Will try both ways to see how it affects results.
+
+## Thoughts
+  - Are there better ways for LLMs to interact with CSV or tabular data? CSV files contain lots of formatting. Is it token efficient? LLM fine tuning on CSV files? Different way to ingest CSV files?
