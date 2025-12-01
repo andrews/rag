@@ -64,6 +64,46 @@ def get_openai_embedding(client, text):
     return embedding
 
 
+def query_documents(question, collection, n_results=4):
+    # I'm assuming the OpenAI embedding function gets called here
+    results = collection.query(
+        # query_embeddings = [...]
+        query_texts=question,
+        n_results=n_results
+    )
+
+    # Extract relevant chunks
+    # I'm assuming these are nested lists
+    relevant_chunks = [doc for sublist in results["documents"] for doc in sublist]
+    print("=== Returning relevant chunks ===")
+    return relevant_chunks
+
+def generate_response(question, client, relevant_chunks):
+    context = "\n\n".join(relevant_chunks)
+    prompt = (
+        "You are an assistant for question-answering tasks. Use the following "
+        "pieces of retrieved context to answer the question. If you don't know "
+        "the answer, say that you don't know. Only use a few sentences and "
+        "keep the answer concise."
+        "\n\nContext:\n" + context + "\n\nQuestion:\n" + question
+    )
+
+    response = client.chat.completions.create(
+        model = 'gpt-5-nano',
+        messages = [
+            {
+                'role': 'system',
+                'content': prompt,
+            },
+            {
+                'role': 'user',
+                'content': question
+            }
+        ]
+    )
+    # answer = response.choices[0].message
+    return response
+
 if __name__ == '__main__':
     load_dotenv()
 
@@ -86,6 +126,7 @@ if __name__ == '__main__':
     client = OpenAI(api_key=openai_key)
     
     directory_path = './bank-statement-data'
+    # Comment below section out to avoid unnecessary embedding and upsert calls
     docs = load_documents_from_directory(directory_path, file_extension='.csv')
     chunked_csv_files = create_csv_chunks(docs)
     
@@ -101,6 +142,24 @@ if __name__ == '__main__':
             documents=[chunk['text']],
             embeddings=[chunk['embedding']]
         )
+
+    # Now we need to query the database
+    # question = "Tell me which month I spent the most money and the kinds of things I spent it on."
+    question = "I'm trying to save money. Tell me what kinds of purchases I should cut back on."
+
+    relevant_chunks = query_documents(
+        question=question,
+        collection=collection
+    )
+    # With the chunks we retrieved, we can make the call to OpenAI
+    # with our prompt, question, and relevant documents
+    raw_answer = generate_response(
+        question=question,
+        client=client,
+        relevant_chunks=relevant_chunks
+    )
+
+    print(raw_answer.choices[0].message.content)
 
     # So we can stay in the program and poke around
     while True:
